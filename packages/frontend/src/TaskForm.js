@@ -172,9 +172,9 @@ function TaskForm({ onSave, initialTask }) {
             onChange={e => setPriority(e.target.value)}
             inputProps={{ 'data-testid': 'priority-select' }}
           >
-            <MenuItem value="P1" sx={{ color: '#07F2E6', fontWeight: 600 }}>P1 - High</MenuItem>
-            <MenuItem value="P2" sx={{ color: '#07F2E6', fontWeight: 600 }}>P2 - Medium</MenuItem>
-            <MenuItem value="P3" sx={{ color: '#7A7A7A', fontWeight: 600 }}>P3 - Low</MenuItem>
+            <MenuItem value="P1" className="priority-selected" sx={{ fontWeight: 600 }}>P1 - High</MenuItem>
+            <MenuItem value="P2" className="priority-selected" sx={{ fontWeight: 600 }}>P2 - Medium</MenuItem>
+            <MenuItem value="P3" className="priority-unselected" sx={{ fontWeight: 600 }}>P3 - Low</MenuItem>
           </Select>
         </FormControl>
         {error && <Typography color="error" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>{error}</Typography>}

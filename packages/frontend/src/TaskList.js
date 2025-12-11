@@ -28,12 +28,12 @@ function TaskList({ onEdit }) {
     });
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityClass = (priority) => {
     switch (priority) {
-      case 'P1': return '#07F2E6';
-      case 'P2': return '#07F2E6';
-      case 'P3': return '#7A7A7A';
-      default: return '#7A7A7A';
+      case 'P1': return 'priority-badge-selected';
+      case 'P2': return 'priority-badge-selected';
+      case 'P3': return 'priority-badge-unselected';
+      default: return 'priority-badge-unselected';
     }
   };
 
@@ -217,11 +217,11 @@ function TaskList({ onEdit }) {
                 icon={<FlagIcon sx={{ fontSize: 12 }} />}
                 label={task.priority || 'P3'}
                 size="small"
+                className={getPriorityClass(task.priority || 'P3')}
                 sx={{
                   height: 18,
                   fontSize: '0.65rem',
                   fontWeight: 600,
-                  backgroundColor: getPriorityColor(task.priority || 'P3'),
                   color: 'white',
                   '& .MuiChip-icon': {
                     color: 'white'
