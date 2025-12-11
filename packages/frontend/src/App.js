@@ -3,7 +3,6 @@ import { CssBaseline, Container, AppBar, Toolbar, Typography, Box } from '@mui/m
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import TaskList from './TaskList';
 import TaskForm from './TaskForm';
-import { createTask, updateTask } from './storage';
 
 function App() {
   const [editingTask, setEditingTask] = useState(null);
@@ -13,11 +12,19 @@ function App() {
     try {
       if (editingTask) {
         // Edit existing task
-        updateTask(editingTask.id, task);
+        await fetch(`/api/tasks/${editingTask.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(task)
+        });
         setEditingTask(null);
       } else {
         // Add new task
-        createTask(task);
+        await fetch('/api/tasks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(task)
+        });
       }
       setRefreshKey(k => k + 1);
     } catch (error) {

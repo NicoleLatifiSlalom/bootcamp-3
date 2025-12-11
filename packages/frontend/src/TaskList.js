@@ -6,7 +6,6 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import EventIcon from '@mui/icons-material/Event';
 import FlagIcon from '@mui/icons-material/Flag';
-import { listTasks, updateTask, deleteTask } from './storage';
 
 function TaskList({ onEdit }) {
   const [tasks, setTasks] = useState([]);
@@ -31,17 +30,19 @@ function TaskList({ onEdit }) {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
-      case 'P1': return '#d32f2f';
-      case 'P2': return '#ff9800';
-      case 'P3': return '#9e9e9e';
-      default: return '#9e9e9e';
+      case 'P1': return '#07F2E6';
+      case 'P2': return '#07F2E6';
+      case 'P3': return '#7A7A7A';
+      default: return '#7A7A7A';
     }
   };
 
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const data = listTasks();
+      const response = await fetch('/api/tasks');
+      if (!response.ok) throw new Error('Failed to fetch tasks');
+      const data = await response.json();
       setTasks(data);
       setError(null);
     } catch (err) {
@@ -53,7 +54,11 @@ function TaskList({ onEdit }) {
 
   const handleToggleComplete = async (task) => {
     try {
-      updateTask(task.id, { completed: !task.completed });
+      await fetch(`/api/tasks/${task.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: !task.completed })
+      });
       fetchTasks();
     } catch (err) {
       setError('Failed to update task');
@@ -62,7 +67,7 @@ function TaskList({ onEdit }) {
 
   const handleDelete = async (id) => {
     try {
-      deleteTask(id);
+      await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
       fetchTasks();
     } catch (err) {
       setError('Failed to delete task');
