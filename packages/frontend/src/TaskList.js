@@ -5,6 +5,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import EventIcon from '@mui/icons-material/Event';
+import FlagIcon from '@mui/icons-material/Flag';
+import { listTasks, updateTask, deleteTask } from './storage';
 
 function TaskList({ onEdit }) {
   const [tasks, setTasks] = useState([]);
@@ -27,12 +29,19 @@ function TaskList({ onEdit }) {
     });
   };
 
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 'P1': return '#d32f2f';
+      case 'P2': return '#ff9800';
+      case 'P3': return '#9e9e9e';
+      default: return '#9e9e9e';
+    }
+  };
+
   const fetchTasks = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/tasks');
-      if (!response.ok) throw new Error('Failed to fetch tasks');
-      const data = await response.json();
+      const data = listTasks();
       setTasks(data);
       setError(null);
     } catch (err) {
@@ -44,11 +53,7 @@ function TaskList({ onEdit }) {
 
   const handleToggleComplete = async (task) => {
     try {
-      await fetch(`/api/tasks/${task.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: !task.completed })
-      });
+      updateTask(task.id, { completed: !task.completed });
       fetchTasks();
     } catch (err) {
       setError('Failed to update task');
@@ -57,7 +62,7 @@ function TaskList({ onEdit }) {
 
   const handleDelete = async (id) => {
     try {
-      await fetch(`/api/tasks/${id}`, { method: 'DELETE' });
+      deleteTask(id);
       fetchTasks();
     } catch (err) {
       setError('Failed to delete task');
@@ -203,6 +208,21 @@ function TaskList({ onEdit }) {
                 gap: 1
               }}
             >
+              <Chip
+                icon={<FlagIcon sx={{ fontSize: 12 }} />}
+                label={task.priority || 'P3'}
+                size="small"
+                sx={{
+                  height: 18,
+                  fontSize: '0.65rem',
+                  fontWeight: 600,
+                  backgroundColor: getPriorityColor(task.priority || 'P3'),
+                  color: 'white',
+                  '& .MuiChip-icon': {
+                    color: 'white'
+                  }
+                }}
+              />
               {task.due_date && (
                 <Chip
                   icon={<EventIcon sx={{ fontSize: 14 }} />}

@@ -3,29 +3,26 @@ import { CssBaseline, Container, AppBar, Toolbar, Typography, Box } from '@mui/m
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import TaskList from './TaskList';
 import TaskForm from './TaskForm';
+import { createTask, updateTask } from './storage';
 
 function App() {
   const [editingTask, setEditingTask] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const handleSave = async (task) => {
-    if (editingTask) {
-      // Edit existing task
-      await fetch(`/api/tasks/${editingTask.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task)
-      });
-      setEditingTask(null);
-    } else {
-      // Add new task
-      await fetch('/api/tasks', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(task)
-      });
+    try {
+      if (editingTask) {
+        // Edit existing task
+        updateTask(editingTask.id, task);
+        setEditingTask(null);
+      } else {
+        // Add new task
+        createTask(task);
+      }
+      setRefreshKey(k => k + 1);
+    } catch (error) {
+      console.error('Failed to save task:', error);
     }
-    setRefreshKey(k => k + 1);
   };
 
   return (
